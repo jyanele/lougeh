@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  fullname  String
+  contact   String?
+  address   String
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String?
+  quantity        Int
+  price           Int
+  barcode         String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  SupplierProduct SupplierProduct[]
+}
+
+model Supplier {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  contact         String?
+  address         String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  SupplierProduct SupplierProduct[]
+}
+
+model Delivery {
+  id          Int      @id @default(autoincrement())
+  details     Json?
+  quantity    Int
+  cost        Int
+  supplier_id Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SupplierProduct {
+  id          Int      @id @default(autoincrement())
+  product_id  Int
+  supplier_id Int
+  Product     Product  @relation(fields: [product_id], references: [id])
+  Supplier    Supplier @relation(fields: [supplier_id], references: [id])
+}
